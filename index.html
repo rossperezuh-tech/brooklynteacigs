@@ -164,6 +164,11 @@
     animation:floaty 7s ease-in-out infinite; transition:opacity .8s ease;
   }
   .btc-live .pack-still{opacity:0; animation:none}
+  .pack3d{position:absolute; inset:0}
+  .pack3d.live .pack-still{opacity:0; animation:none}
+  .pack-hint{margin-top:12px; min-height:1.3em; font-size:.66rem; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--gold); text-align:center; opacity:0; transition:opacity .8s ease}
+  .pack-hint.on{opacity:.9}
   @keyframes floaty{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,calc(-50% - 12px))}}
   .hero-tag{font-size:.7rem; letter-spacing:.3em; text-transform:uppercase; color:var(--mute); text-align:center}
   .hero-tag b{color:var(--gold); font-weight:500}
@@ -323,7 +328,7 @@
     .hero .lead{margin-left:auto; margin-right:auto}
     .hero .cta-row{justify-content:center}
     .hero-art{order:-1}
-    .pack-stage{max-width:300px}
+    .pack-stage{max-width:340px}
     .claims li{font-size:.62rem; letter-spacing:.24em}
     .blend,.shop{padding:68px 0}
   }
@@ -430,13 +435,13 @@
       </div>
       <div class="hero-art">
         <div class="pack-stage">
-          <div class="btc-boxes" data-boxes="black" data-speed="0.8">
+          <div class="pack3d" data-pack="black">
             <img class="pack-still" src="btc3d/black-pack.webp" width="760" height="1083" fetchpriority="high"
                  alt="Brooklyn Tea Cigs black pack: herbal cigarettes, pack of 20">
           </div>
         </div>
         <div class="hero-tag">Black <b>&middot;</b> Pack of 20 <b>&middot;</b> 84mm <b>&middot;</b> $10</div>
-        <a class="view3d" href="btc3d/viewer.html">Open the pack in 3D</a>
+        <p class="pack-hint" data-pack-hint aria-live="polite">Drag to turn &middot; tap to open &middot; double-tap to take one out</p>
       </div>
     </div>
   </section>
@@ -670,7 +675,7 @@
     var c = navigator.connection;
     if (c && c.saveData) return;
     var go = function(){
-      ['btc3d/vendor/three.min.js','btc3d/vendor/RoomEnvironment.js','btc3d/btc-boxes.js'].forEach(function(src){
+      ['btc3d/vendor/three.min.js','btc3d/vendor/RoomEnvironment.js','btc3d/pack3d.js'].forEach(function(src){
         var s = document.createElement('script'); s.src = src; s.async = false; document.body.appendChild(s);
       });
     };
