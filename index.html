@@ -338,6 +338,18 @@
   .cart-close:hover{color:var(--bone)}
   .cart-empty{color:var(--mute); font-size:.88rem; font-style:italic}
 
+  /* ---------- music ---------- */
+  .music-fab{position:fixed; left:22px; bottom:22px; z-index:60; width:48px; height:48px; border-radius:50%;
+    border:1px solid var(--line); background:rgba(11,11,10,.82); color:var(--gold); cursor:pointer;
+    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 24px rgba(0,0,0,.5); transition:border-color .25s, color .25s}
+  .music-fab:hover{border-color:var(--gold); color:var(--gold-hi)}
+  .music-fab svg{width:20px; height:20px}
+  .music-fab .i-on{display:none}
+  .music-fab.on .i-on{display:block}
+  .music-fab.on .i-off{display:none}
+  .music-fab.on{border-color:var(--gold)}
+
   /* ---------- notice + footer ---------- */
   .notice{background:#080807; padding:26px 0; border-top:1px solid var(--hair)}
   .notice p{text-align:center; color:#7D7768; font-size:.78rem; letter-spacing:.03em; max-width:760px; margin:0 auto}
@@ -621,6 +633,11 @@
     </div>
   </div>
 </div>
+<audio id="bgm" src="audio/the-cigarette.mp3" loop preload="none"></audio>
+<button class="music-fab" id="musicBtn" type="button" onclick="toggleMusic()" aria-label="Play music" aria-pressed="false">
+  <svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6"/><path d="m17 9 6 6"/></svg>
+  <svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.540 8.460a5 5 0 0 1 0 7.070"/><path d="M19.070 4.930a10 10 0 0 1 0 14.140"/></svg>
+</button>
 <div class="cart-drawer" id="cartDrawer" aria-label="Cart">
   <button class="cart-close" onclick="toggleCart()" aria-label="Close cart">&times;</button>
   <h3 class="foil">Your pack stack</h3>
@@ -674,6 +691,7 @@
   function enterSite(){
     var g=document.getElementById('gate');
     try{localStorage.setItem('btc21','1');}catch(e){}
+    startMusicOnEnter();
     g.style.opacity='0';
     setTimeout(function(){g.style.display='none';},500);
   }
@@ -830,6 +848,38 @@
     fetch(`https://formsubmit.co/ajax/${PAY.orderEmail}`, {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(order)
     }).catch(() => {});
+  });
+
+  // background music. Browsers only allow sound after a tap, so it starts on
+  // the 21+ "Yes" (unless the visitor turned it off before) or from the button.
+  const bgm = document.getElementById('bgm'), musicBtn = document.getElementById('musicBtn');
+  const MUSIC_VOLUME = 0.55;
+  let fadeTimer = null;
+  function musicUI(on){
+    musicBtn.classList.toggle('on', on);
+    musicBtn.setAttribute('aria-pressed', String(on));
+    musicBtn.setAttribute('aria-label', on ? 'Pause music' : 'Play music');
+  }
+  function playMusic(){
+    clearInterval(fadeTimer);
+    bgm.volume = 0;
+    const p = bgm.play();
+    const fadeIn = () => { musicUI(true);
+      fadeTimer = setInterval(() => { bgm.volume = Math.min(MUSIC_VOLUME, bgm.volume + 0.04); if(bgm.volume >= MUSIC_VOLUME) clearInterval(fadeTimer); }, 80); };
+    if(p && p.then) p.then(fadeIn).catch(() => musicUI(false)); else fadeIn();
+  }
+  function toggleMusic(){
+    if(bgm.paused){ playMusic(); try{localStorage.setItem('btcMusic','on');}catch(e){} }
+    else { clearInterval(fadeTimer); bgm.pause(); musicUI(false); try{localStorage.setItem('btcMusic','off');}catch(e){} }
+  }
+  function startMusicOnEnter(){
+    let pref = null; try{ pref = localStorage.getItem('btcMusic'); }catch(e){}
+    if(pref !== 'off') playMusic();
+  }
+  // pause while the tab is in the background, pick back up on return
+  document.addEventListener('visibilitychange', () => {
+    if(document.hidden){ if(!bgm.paused){ bgm.pause(); bgm.dataset.resume = '1'; } }
+    else if(bgm.dataset.resume){ delete bgm.dataset.resume; bgm.play().then(() => musicUI(true)).catch(() => musicUI(false)); }
   });
 
   // scroll reveal
