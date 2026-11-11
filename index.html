@@ -616,9 +616,6 @@
       <h3>Order <span id="coNum"></span> placed</h3>
       <p class="co-sub">Send your payment now. Use your order number as the note so we can match it.</p>
       <div class="paybox" id="coPayBox"></div>
-      <ol class="steps" id="coSteps"></ol>
-      <div class="err" id="coSendErr"></div>
-      <a class="btn" id="coMailBtn" href="#" hidden>Email us your order</a>
       <button class="btn" type="button" onclick="closeCo(true)">Done</button>
       <p class="note">Orders ship within 1–3 business days after payment arrives. We'll email you tracking. Questions: <span id="coContact"></span></p>
     </div>
@@ -813,36 +810,26 @@
     // payment instructions
     const note = num;
     let box = `<div class="line"><span>Amount</span><span class="big">$${total}</span></div>`;
-    let steps = '';
     if(pay === 'zelle'){
       box += `<div class="line"><span>Send to<br><b>${PAY.zelleName}</b><br>${PAY.zelle}</span><button class="copy" type="button" onclick="copyText('${PAY.zelle}', this)">Copy</button></div>` +
              `<div class="line"><span>Memo: <b>${note}</b></span><button class="copy" type="button" onclick="copyText('${note}', this)">Copy</button></div>`;
-      steps = `<li>Open your bank app and choose Zelle.</li><li>Send <b>$${total}</b> to <b>${PAY.zelle}</b> (${PAY.zelleName}).</li><li>Put <b>${note}</b> in the memo.</li>`;
     } else {
       const link = `https://venmo.com/${encodeURIComponent(PAY.venmo)}?txn=pay&amount=${total}&note=${encodeURIComponent(note)}`;
       // The link pre-fills the amount and the order-number note in Venmo.
       box += `<a class="btn" href="${link}" target="_blank" rel="noopener" style="margin-top:12px">Pay here on Venmo</a>` +
              `<p class="venmo-at">@${PAY.venmo}</p>`;
-      steps = `<li>Tap <b>Pay here on Venmo</b>, or open Venmo and find <b>@${PAY.venmo}</b>.</li><li>Check the amount is <b>$${total}</b> and the note says <b>${note}</b>.</li><li>Send as a payment.</li>`;
     }
     document.getElementById('coNum').textContent = num;
     document.getElementById('coPayBox').innerHTML = box;
-    document.getElementById('coSteps').innerHTML = steps;
     document.getElementById('coContact').textContent = PAY.orderEmail;
     document.getElementById('coForm').hidden = true;
     document.getElementById('coPayStep').hidden = false;
     document.querySelector('.co').scrollIntoView({block:'start'});
 
-    // email the order to the shop (FormSubmit). If that fails, offer an email button.
-    const mail = document.getElementById('coMailBtn'), sendErr = document.getElementById('coSendErr');
-    const body = Object.entries(order).filter(([k])=>!k.startsWith('_')).map(([k,val])=>`${k.replace(/_/g,' ')}: ${val}`).join('\n');
-    mail.href = `mailto:${PAY.orderEmail}?subject=${encodeURIComponent('Order ' + num)}&body=${encodeURIComponent(body)}`;
-    mail.hidden = true; sendErr.textContent = '';
+    // email the order to the shop (FormSubmit)
     fetch(`https://formsubmit.co/ajax/${PAY.orderEmail}`, {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(order)
-    }).then(r => { if(!r.ok) throw 0; return r.json(); })
-      .then(j => { if(String(j.success) !== 'true') throw 0; })
-      .catch(() => { sendErr.textContent = "We couldn't send your order automatically. Please tap below to email it to us."; mail.hidden = false; });
+    }).catch(() => {});
   });
 
   // scroll reveal
