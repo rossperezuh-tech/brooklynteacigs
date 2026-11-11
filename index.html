@@ -133,16 +133,17 @@
   .hero::before{
     content:""; position:absolute; inset:0; pointer-events:none; opacity:.13;
     background:url(btc3d/rose-tile.webp) center/auto 168px repeat;
-    -webkit-mask:radial-gradient(ellipse 58% 70% at 72% 48%,#000 0%,#0000 72%);
-    mask:radial-gradient(ellipse 58% 70% at 72% 48%,#000 0%,#0000 72%);
+    -webkit-mask:radial-gradient(ellipse 58% 70% at 50% 48%,#000 0%,#0000 72%);
+    mask:radial-gradient(ellipse 58% 70% at 50% 48%,#000 0%,#0000 72%);
   }
   .hero-glow{
-    position:absolute; left:72%; top:48%; width:680px; height:680px; transform:translate(-50%,-50%);
+    position:absolute; left:50%; top:48%; width:680px; height:680px; transform:translate(-50%,-50%);
     background:radial-gradient(circle, rgba(201,162,75,.20) 0%, rgba(201,162,75,.06) 36%, transparent 66%);
     pointer-events:none;
   }
-  .hero-inner{position:relative; z-index:1; display:grid;
-    grid-template-columns:1.05fr .95fr; gap:30px; align-items:center}
+  .hero-inner{position:relative; z-index:1; display:flex; justify-content:center}
+  .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+    clip:rect(0,0,0,0); white-space:nowrap; border:0}
   .hero-copy{max-width:540px}
   .hero h1{
     font-family:var(--serif); font-weight:500; line-height:1.04; margin:20px 0 24px;
@@ -154,7 +155,7 @@
   .hero .lead{font-size:1.06rem; color:#CFC8B8; max-width:470px; margin-bottom:32px}
   .hero .cta-row{display:flex; gap:14px; align-items:center; flex-wrap:wrap}
   .hero-art{display:flex; flex-direction:column; align-items:center}
-  .pack-stage{position:relative; width:100%; max-width:440px; aspect-ratio:4/5}
+  .pack-stage{position:relative; width:100%; max-width:480px; aspect-ratio:4/5}
   .pack-stage .btc-boxes{position:absolute; inset:0}
   .pack-stage .btc-poster{display:none !important}
   .pack-still{
@@ -181,6 +182,7 @@
   .claims ul{list-style:none; display:flex; justify-content:center; flex-wrap:wrap; gap:6px 0}
   .claims li{font-size:.7rem; letter-spacing:.32em; text-transform:uppercase; color:var(--bone); white-space:nowrap}
   .claims li + li::before{content:"\00B7"; color:var(--gold); margin:0 1.2em}
+  @media(max-width:600px){ .claims ul{gap:8px 20px} .claims li + li::before{display:none} }
 
   /* ---------- section heads ---------- */
   .sec-head{text-align:center; max-width:620px; margin:0 auto 54px}
@@ -424,15 +426,7 @@
   <section class="hero">
     <div class="hero-glow"></div>
     <div class="wrap hero-inner">
-      <div class="hero-copy">
-        <span class="eyebrow">Hand-rolled in Brooklyn, NY</span>
-        <h1><span class="l1 foil">Smoke the ritual</span><em>Skip the chemicals</em></h1>
-        <p class="lead">Organic herbal cigarettes. Green tea, peppermint, mullein, rose and lavender, rolled into a real cigarette. No tobacco. No nicotine.</p>
-        <div class="cta-row">
-          <a href="#shop" class="btn">Shop the black pack</a>
-          <a href="#blend" class="btn ghost">See the blend</a>
-        </div>
-      </div>
+      <h1 class="sr-only">Brooklyn Tea Cigs: organic herbal cigarettes, hand-rolled in Brooklyn</h1>
       <div class="hero-art">
         <div class="pack-stage">
           <div class="pack3d" data-pack="black">
