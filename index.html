@@ -296,6 +296,41 @@
   .age-check input{width:18px; height:18px; margin-top:1px; flex:none; accent-color:var(--gold); cursor:pointer}
   .age-err{display:none; color:#E07A86; font-size:.78rem; margin:-6px 0 12px}
   .age-err.show{display:block}
+  /* ===== checkout (Zelle / Venmo) ===== */
+  .co-wrap{position:fixed; inset:0; z-index:90; background:rgba(5,8,6,.78); display:none; align-items:flex-start; justify-content:center; overflow-y:auto; padding:24px 16px}
+  .co-wrap.open{display:flex}
+  .co{background:var(--char2); border:1px solid rgba(201,162,75,.3); border-radius:4px; width:100%; max-width:520px; padding:26px 22px 22px; position:relative; color:var(--bone)}
+  .co h3{font-family:var(--serif); font-weight:500; font-size:1.5rem; margin:0 0 4px}
+  .co .co-sub{color:var(--mute); font-size:.85rem; margin:0 0 18px}
+  .co label{display:block; font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); margin:12px 0 5px}
+  .co input[type=text],.co input[type=email],.co input[type=tel],.co input[type=date]{width:100%; background:#0f1510; border:1px solid #37423a; color:var(--bone); border-radius:2px; padding:11px 12px; font:inherit; font-size:16px}
+  .co input:focus{outline:none; border-color:var(--gold)}
+  .co .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .co .row3{display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px}
+  .co .opts{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px}
+  .co [hidden]{display:none !important}
+  .co .opt{text-transform:none; letter-spacing:0; color:var(--bone); margin:0; font-size:.95rem; border:1px solid #37423a; border-radius:3px; padding:12px; cursor:pointer; display:flex; gap:10px; align-items:flex-start; font-size:.9rem}
+  .co .opt input{margin-top:3px; accent-color:var(--gold)}
+  .co .opt small{display:block; color:var(--mute); font-size:.8rem; margin-top:2px}
+  .co .opt:has(input:checked){border-color:var(--gold); background:rgba(201,162,75,.07)}
+  .co .check{margin:16px 0 0; display:flex; gap:10px; align-items:flex-start; font-size:.86rem; margin-top:16px; color:var(--bone); text-transform:none; letter-spacing:0}
+  .co .check input{margin-top:3px; accent-color:var(--gold); width:18px; height:18px; flex:none}
+  .co .sum{border-top:1px solid rgba(201,162,75,.25); margin-top:18px; padding-top:12px; font-size:.9rem}
+  .co .sum div{display:flex; justify-content:space-between; padding:3px 0}
+  .co .sum .tot{font-family:var(--serif); font-size:1.2rem; color:var(--gold-hi); padding-top:8px}
+  .co .err{color:#f08a7a; font-size:.85rem; margin-top:12px; min-height:1em}
+  .co .btn{width:100%; text-align:center; margin-top:14px; border:none; cursor:pointer; font:inherit}
+  .co .btn[disabled]{opacity:.45; cursor:not-allowed}
+  .co .x{position:absolute; top:10px; right:14px; background:none; border:none; color:var(--mute); font-size:1.5rem; cursor:pointer}
+  .co .paybox{border:1px solid rgba(201,162,75,.35); border-radius:3px; padding:16px; margin-top:14px; background:#0f1510}
+  .co .paybox .big{font-family:var(--serif); font-size:1.6rem; color:var(--gold-hi)}
+  .co .paybox .line{display:flex; justify-content:space-between; gap:10px; align-items:center; padding:7px 0; border-bottom:1px solid rgba(201,162,75,.12); font-size:.92rem}
+  .co .paybox .line:last-child{border-bottom:none}
+  .co .copy{background:transparent; border:1px solid var(--gold); color:var(--gold-hi); border-radius:2px; padding:5px 10px; font:inherit; font-size:.75rem; cursor:pointer; flex:none}
+  .co .steps{margin:14px 0 0; padding-left:18px; font-size:.88rem; color:#d4cfc3}
+  .co .steps li{margin:4px 0}
+  .co .note{color:var(--mute); font-size:.8rem; margin-top:12px}
+  @media (max-width:480px){ .co .row3{grid-template-columns:1fr 1fr} .co .row3 .city{grid-column:1 / -1} }
   .cart-sub{font-size:.76rem; color:var(--mute); text-align:center; margin-top:12px; font-style:italic}
   .cart-close{position:absolute; top:14px; right:16px; background:none; border:none;
     color:var(--mute); font-size:1.5rem; cursor:pointer; line-height:1; padding:4px 8px}
@@ -538,6 +573,59 @@
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.680 13.390a2 2 0 0 0 2 1.610h9.720a2 2 0 0 0 2-1.610L23 6H6"/></svg>
   <span class="cnum" id="cartCount">0</span>
 </button>
+<div class="co-wrap" id="coWrap" role="dialog" aria-modal="true" aria-labelledby="coTitle">
+  <div class="co">
+    <button class="x" onclick="closeCo()" aria-label="Close checkout">&times;</button>
+    <!-- step 1: details -->
+    <form id="coForm" novalidate>
+      <h3 id="coTitle">Checkout</h3>
+      <p class="co-sub">Pay with Zelle or Venmo after you place the order. We ship once payment arrives.</p>
+      <div class="row2">
+        <div><label for="coName">Full name</label><input id="coName" type="text" autocomplete="name" required></div>
+        <div><label for="coDob">Date of birth</label><input id="coDob" type="date" required></div>
+      </div>
+      <div class="row2">
+        <div><label for="coEmail">Email</label><input id="coEmail" type="email" autocomplete="email" required></div>
+        <div><label for="coPhone">Phone</label><input id="coPhone" type="tel" autocomplete="tel" required></div>
+      </div>
+      <label>Delivery</label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="coShip" value="ship" checked onchange="coUpdate()"><span>Ship to me<small id="coShipNote">US only · adult signature</small></span></label>
+        <label class="opt"><input type="radio" name="coShip" value="local" onchange="coUpdate()"><span>Brooklyn pickup / delivery<small>Free · we'll text you</small></span></label>
+      </div>
+      <div id="coAddr">
+        <label for="coStreet">Street address</label><input id="coStreet" type="text" autocomplete="address-line1">
+        <label for="coStreet2">Apt / unit (optional)</label><input id="coStreet2" type="text" autocomplete="address-line2">
+        <div class="row3">
+          <div class="city"><label for="coCity">City</label><input id="coCity" type="text" autocomplete="address-level2"></div>
+          <div><label for="coState">State</label><input id="coState" type="text" autocomplete="address-level1" maxlength="2" placeholder="NY"></div>
+          <div><label for="coZip">ZIP</label><input id="coZip" type="text" autocomplete="postal-code" inputmode="numeric" maxlength="10"></div>
+        </div>
+      </div>
+      <label>Pay with</label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="coPay" value="zelle" checked><span>Zelle<small>From your bank app</small></span></label>
+        <label class="opt"><input type="radio" name="coPay" value="venmo"><span>Venmo<small>Opens Venmo with the amount filled in</small></span></label>
+      </div>
+      <label class="check"><input type="checkbox" id="co21" onchange="coUpdate()"><span>I am 21 or older. I understand an adult (21+) must sign for delivery and you may ask to see ID.</span></label>
+      <div class="sum" id="coSum"></div>
+      <div class="err" id="coErr" role="alert"></div>
+      <button type="submit" class="btn" id="coSubmit" disabled>Place order</button>
+      <p class="note">By ordering you agree to our <a href="terms.html">Terms</a>, <a href="shipping.html">Shipping</a> and <a href="refunds.html">Refunds</a> policies.</p>
+    </form>
+    <!-- step 2: pay -->
+    <div id="coPayStep" hidden>
+      <h3>Order <span id="coNum"></span> placed</h3>
+      <p class="co-sub">Send your payment now. Use your order number as the note so we can match it.</p>
+      <div class="paybox" id="coPayBox"></div>
+      <ol class="steps" id="coSteps"></ol>
+      <div class="err" id="coSendErr"></div>
+      <a class="btn" id="coMailBtn" href="#" hidden>Email us your order</a>
+      <button class="btn" type="button" onclick="closeCo(true)">Done</button>
+      <p class="note">Orders ship within 1–3 business days after payment arrives. We'll email you tracking. Questions: <span id="coContact"></span></p>
+    </div>
+  </div>
+</div>
 <div class="cart-drawer" id="cartDrawer" aria-label="Cart">
   <button class="cart-close" onclick="toggleCart()" aria-label="Close cart">&times;</button>
   <h3 class="foil">Your pack stack</h3>
@@ -545,8 +633,8 @@
   <div class="cart-total"><span>Total</span><span id="cartTotal">$0</span></div>
   <label class="age-check"><input type="checkbox" id="ageOk" onchange="ageChanged()"> I confirm I am 21 or older</label>
   <p class="age-err" id="ageErr" role="alert">Please confirm you are 21 or older to place an order.</p>
-  <a class="btn" id="checkoutBtn" href="#" onclick="checkout(event)" aria-disabled="true">Order by email</a>
-  <p class="cart-sub">We confirm by email with pickup or delivery details. Or skip the cart and find us at the stand.</p>
+  <a class="btn" id="checkoutBtn" href="#" onclick="checkout(event)" aria-disabled="true">Checkout</a>
+  <p class="cart-sub">Pay with Zelle or Venmo. Ships from Brooklyn in 1–3 business days, or pick up in Brooklyn.</p>
 </div>
 
 <div class="notice">
@@ -571,6 +659,11 @@
           <a href="btc3d/viewer.html">3D viewer</a>
           <a href="#top">Back to top</a>
           <a class="plain" href="mailto:hello@brooklynteacigs.com">hello@brooklynteacigs.com</a>
+        </div>
+        <div>
+          <a href="shipping.html">Shipping</a>
+          <a href="refunds.html">Refunds &amp; returns</a>
+          <a href="terms.html">Terms</a>
         </div>
       </div>
     </div>
@@ -637,16 +730,123 @@
     document.getElementById('checkoutBtn').setAttribute('aria-disabled', String(!ok));
     if(ok) document.getElementById('ageErr').classList.remove('show');
   }
+  // ===== PAYMENT SETTINGS: edit these =====
+  const PAY = {
+    zelle: '361-537-7255',   // the email or phone your Zelle is registered to
+    zelleName: 'Ross Perez',        // the name customers will see in Zelle
+    venmo: 'ross-Perezz',          // without the @
+    orderEmail: 'hello@brooklynteacigs.com', // where new orders are emailed
+    shipping: 10,                          // flat US shipping in dollars (incl. adult signature)
+    freeShipOver: 0                        // free shipping at or above this subtotal; 0 = never
+  };
+
+  function subtotal(){ return Object.entries(cart).reduce((s,[n,q])=>s+lineTotal(n,q),0); }
+  function shipCost(){
+    const m = document.querySelector('input[name=coShip]:checked').value;
+    if(m !== 'ship') return 0;
+    return (PAY.freeShipOver && subtotal() >= PAY.freeShipOver) ? 0 : PAY.shipping;
+  }
+  function age(dob){
+    const d = new Date(dob + 'T00:00:00'); if(isNaN(d)) return 0;
+    const t = new Date(); let a = t.getFullYear() - d.getFullYear();
+    if(t.getMonth() < d.getMonth() || (t.getMonth() === d.getMonth() && t.getDate() < d.getDate())) a--;
+    return a;
+  }
+  function coUpdate(){
+    const ship = document.querySelector('input[name=coShip]:checked').value === 'ship';
+    document.getElementById('coAddr').style.display = ship ? '' : 'none';
+    document.getElementById('coShipNote').textContent = 'US only · adult signature · $' + PAY.shipping;
+    const items = Object.entries(cart), sc = shipCost(), st = subtotal();
+    document.getElementById('coSum').innerHTML =
+      items.map(([n,q])=>`<div><span>${q} × ${n}</span><span>$${lineTotal(n,q)}</span></div>`).join('') +
+      `<div><span>${ship ? 'Shipping' : 'Brooklyn pickup / delivery'}</span><span>${sc ? '$' + sc : 'Free'}</span></div>` +
+      `<div class="tot"><span>Total</span><span>$${st + sc}</span></div>`;
+    document.getElementById('coSubmit').disabled = !document.getElementById('co21').checked;
+  }
   function checkout(e){
     e.preventDefault();
-    const items = Object.entries(cart);
-    if(!items.length) return;
-    const age = document.getElementById('ageOk');
-    if(!age.checked){ document.getElementById('ageErr').classList.add('show'); age.focus(); return; }
-    const lines = items.map(([n,q])=>`${q}x ${n} — $${lineTotal(n,q)}`).join('%0D%0A');
-    const total = items.reduce((s,[n,q])=>s+lineTotal(n,q),0);
-    window.location.href = `mailto:hello@brooklynteacigs.com?subject=BTC Order&body=Hi BTC — I'd like to order:%0D%0A%0D%0A${lines}%0D%0A%0D%0ATotal: $${total}%0D%0A%0D%0AI confirm I am 21 or older: Yes%0D%0A%0D%0AName:%0D%0APickup at market or Brooklyn delivery?:`;
+    if(!Object.keys(cart).length) return;
+    const ageBox = document.getElementById('ageOk');
+    if(ageBox && !ageBox.checked){ document.getElementById('ageErr').classList.add('show'); ageBox.focus(); return; }
+    document.getElementById('co21').checked = true;
+    document.getElementById('cartDrawer').classList.remove('open');
+    document.getElementById('coForm').hidden = false;
+    document.getElementById('coPayStep').hidden = true;
+    document.getElementById('coErr').textContent = '';
+    document.getElementById('coWrap').classList.add('open');
+    coUpdate();
+    setTimeout(()=>document.getElementById('coName').focus(), 50);
   }
+  function closeCo(done){
+    document.getElementById('coWrap').classList.remove('open');
+    if(done){ cart = {}; renderCart(); }
+  }
+  document.getElementById('coWrap').addEventListener('click', e => { if(e.target.id === 'coWrap') closeCo(); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') closeCo(); });
+
+  function copyText(t, btn){
+    const done = () => { const o = btn.textContent; btn.textContent = 'Copied'; setTimeout(()=>btn.textContent = o, 1400); };
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, ()=>{});
+  }
+
+  document.getElementById('coForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const v = id => document.getElementById(id).value.trim();
+    const err = document.getElementById('coErr');
+    const ship = document.querySelector('input[name=coShip]:checked').value === 'ship';
+    if(!v('coName') || !v('coEmail') || !v('coPhone') || !v('coDob')) { err.textContent = 'Please fill in your name, date of birth, email and phone.'; return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('coEmail'))) { err.textContent = 'Please check your email address.'; return; }
+    if(age(v('coDob')) < 21) { err.textContent = 'Sorry, you must be 21 or older to order.'; return; }
+    if(ship && (!v('coStreet') || !v('coCity') || !v('coState') || !v('coZip'))) { err.textContent = 'Please fill in your full shipping address.'; return; }
+    if(!document.getElementById('co21').checked) { err.textContent = 'Please confirm you are 21 or older.'; return; }
+
+    const num = 'BTC-' + Date.now().toString(36).slice(-5).toUpperCase();
+    const pay = document.querySelector('input[name=coPay]:checked').value;
+    const items = Object.entries(cart), sc = shipCost(), total = subtotal() + sc;
+    const itemLines = items.map(([n,q])=>`${q} x ${n} - $${lineTotal(n,q)}`).join('\n');
+    const addr = ship ? [v('coStreet'), v('coStreet2'), `${v('coCity')}, ${v('coState').toUpperCase()} ${v('coZip')}`].filter(Boolean).join('\n') : 'Brooklyn pickup / local delivery';
+    const order = {
+      _subject: `New order ${num} - $${total} via ${pay === 'zelle' ? 'Zelle' : 'Venmo'}`,
+      order: num, payment: pay === 'zelle' ? 'Zelle' : 'Venmo', total: '$' + total,
+      items: itemLines, shipping: sc ? '$' + sc : 'Free', delivery: addr,
+      name: v('coName'), email: v('coEmail'), phone: v('coPhone'), date_of_birth: v('coDob'),
+      confirmed_21: 'yes', _template: 'table', _captcha: 'false'
+    };
+
+    // payment instructions
+    const note = num;
+    let box = `<div class="line"><span>Amount</span><span class="big">$${total}</span></div>`;
+    let steps = '';
+    if(pay === 'zelle'){
+      box += `<div class="line"><span>Send to<br><b>${PAY.zelleName}</b><br>${PAY.zelle}</span><button class="copy" type="button" onclick="copyText('${PAY.zelle}', this)">Copy</button></div>` +
+             `<div class="line"><span>Memo: <b>${note}</b></span><button class="copy" type="button" onclick="copyText('${note}', this)">Copy</button></div>`;
+      steps = `<li>Open your bank app and choose Zelle.</li><li>Send <b>$${total}</b> to <b>${PAY.zelle}</b> (${PAY.zelleName}).</li><li>Put <b>${note}</b> in the memo.</li>`;
+    } else {
+      const link = `https://venmo.com/${encodeURIComponent(PAY.venmo)}?txn=pay&amount=${total}&note=${encodeURIComponent(note)}`;
+      box += `<div class="line"><span>Send to <b>@${PAY.venmo}</b></span><button class="copy" type="button" onclick="copyText('@${PAY.venmo}', this)">Copy</button></div>` +
+             `<div class="line"><span>Note: <b>${note}</b></span><button class="copy" type="button" onclick="copyText('${note}', this)">Copy</button></div>` +
+             `<a class="btn" href="${link}" target="_blank" rel="noopener" style="margin-top:12px">Pay $${total} on Venmo</a>`;
+      steps = `<li>Tap <b>Pay $${total} on Venmo</b>, or open Venmo and find <b>@${PAY.venmo}</b>.</li><li>Check the amount is <b>$${total}</b> and the note says <b>${note}</b>.</li><li>Send as a payment.</li>`;
+    }
+    document.getElementById('coNum').textContent = num;
+    document.getElementById('coPayBox').innerHTML = box;
+    document.getElementById('coSteps').innerHTML = steps;
+    document.getElementById('coContact').textContent = PAY.orderEmail;
+    document.getElementById('coForm').hidden = true;
+    document.getElementById('coPayStep').hidden = false;
+    document.querySelector('.co').scrollIntoView({block:'start'});
+
+    // email the order to the shop (FormSubmit). If that fails, offer an email button.
+    const mail = document.getElementById('coMailBtn'), sendErr = document.getElementById('coSendErr');
+    const body = Object.entries(order).filter(([k])=>!k.startsWith('_')).map(([k,val])=>`${k.replace(/_/g,' ')}: ${val}`).join('\n');
+    mail.href = `mailto:${PAY.orderEmail}?subject=${encodeURIComponent('Order ' + num)}&body=${encodeURIComponent(body)}`;
+    mail.hidden = true; sendErr.textContent = '';
+    fetch(`https://formsubmit.co/ajax/${PAY.orderEmail}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(order)
+    }).then(r => { if(!r.ok) throw 0; return r.json(); })
+      .then(j => { if(String(j.success) !== 'true') throw 0; })
+      .catch(() => { sendErr.textContent = "We couldn't send your order automatically. Please tap below to email it to us."; mail.hidden = false; });
+  });
 
   // scroll reveal
   var reveals=document.querySelectorAll('.reveal');
