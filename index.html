@@ -590,7 +590,7 @@
       </div>
       <label>Delivery</label>
       <div class="opts">
-        <label class="opt"><input type="radio" name="coShip" value="ship" checked onchange="coUpdate()"><span>Ship to me<small id="coShipNote">US only · adult signature</small></span></label>
+        <label class="opt"><input type="radio" name="coShip" value="ship" checked onchange="coUpdate()"><span>Ship to me<small id="coShipNote">$5</small></span></label>
         <label class="opt"><input type="radio" name="coShip" value="local" onchange="coUpdate()"><span>Brooklyn pickup / delivery<small>Free · we'll text you</small></span></label>
       </div>
       <div id="coAddr">
@@ -607,7 +607,7 @@
         <label class="opt"><input type="radio" name="coPay" value="zelle" checked><span>Zelle<small>From your bank app</small></span></label>
         <label class="opt"><input type="radio" name="coPay" value="venmo"><span>Venmo<small>Opens Venmo with the amount filled in</small></span></label>
       </div>
-      <label class="check"><input type="checkbox" id="co21" onchange="coUpdate()"><span>I am 21 or older. I understand an adult (21+) must sign for delivery and you may ask to see ID.</span></label>
+      <label class="check"><input type="checkbox" id="co21" onchange="coUpdate()"><span>I am 21 or older. I understand you may ask to see ID.</span></label>
       <div class="sum" id="coSum"></div>
       <div class="err" id="coErr" role="alert"></div>
       <button type="submit" class="btn" id="coSubmit" disabled>Place order</button>
@@ -736,7 +736,7 @@
     zelleName: 'Ross Perez',        // the name customers will see in Zelle
     venmo: 'ross-Perezz',          // without the @
     orderEmail: 'hello@brooklynteacigs.com', // where new orders are emailed
-    shipping: 5,                           // flat US shipping in dollars (incl. adult signature)
+    shipping: 5,                           // flat US shipping in dollars
     freeShipOver: 0                        // free shipping at or above this subtotal; 0 = never
   };
 
@@ -755,7 +755,7 @@
   function coUpdate(){
     const ship = document.querySelector('input[name=coShip]:checked').value === 'ship';
     document.getElementById('coAddr').style.display = ship ? '' : 'none';
-    document.getElementById('coShipNote').textContent = 'US only · adult signature · $' + PAY.shipping;
+    document.getElementById('coShipNote').textContent = '$' + PAY.shipping;
     const items = Object.entries(cart), sc = shipCost(), st = subtotal();
     document.getElementById('coSum').innerHTML =
       items.map(([n,q])=>`<div><span>${q} × ${n}</span><span>$${lineTotal(n,q)}</span></div>`).join('') +
