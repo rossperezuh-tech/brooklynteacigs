@@ -309,6 +309,7 @@
   .co .row3{display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px}
   .co .opts{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px}
   .co [hidden]{display:none !important}
+  .venmo-at{text-align:center; margin:10px 0 0; font-size:.92rem; letter-spacing:.04em; color:var(--gold-hi)}
   .co .opt{text-transform:none; letter-spacing:0; color:var(--bone); margin:0; font-size:.95rem; border:1px solid #37423a; border-radius:3px; padding:12px; cursor:pointer; display:flex; gap:10px; align-items:flex-start; font-size:.9rem}
   .co .opt input{margin-top:3px; accent-color:var(--gold)}
   .co .opt small{display:block; color:var(--mute); font-size:.8rem; margin-top:2px}
@@ -819,10 +820,10 @@
       steps = `<li>Open your bank app and choose Zelle.</li><li>Send <b>$${total}</b> to <b>${PAY.zelle}</b> (${PAY.zelleName}).</li><li>Put <b>${note}</b> in the memo.</li>`;
     } else {
       const link = `https://venmo.com/${encodeURIComponent(PAY.venmo)}?txn=pay&amount=${total}&note=${encodeURIComponent(note)}`;
-      box += `<div class="line"><span>Send to <b>@${PAY.venmo}</b></span><button class="copy" type="button" onclick="copyText('@${PAY.venmo}', this)">Copy</button></div>` +
-             `<div class="line"><span>Note: <b>${note}</b></span><button class="copy" type="button" onclick="copyText('${note}', this)">Copy</button></div>` +
-             `<a class="btn" href="${link}" target="_blank" rel="noopener" style="margin-top:12px">Pay $${total} on Venmo</a>`;
-      steps = `<li>Tap <b>Pay $${total} on Venmo</b>, or open Venmo and find <b>@${PAY.venmo}</b>.</li><li>Check the amount is <b>$${total}</b> and the note says <b>${note}</b>.</li><li>Send as a payment.</li>`;
+      // The link pre-fills the amount and the order-number note in Venmo.
+      box += `<a class="btn" href="${link}" target="_blank" rel="noopener" style="margin-top:12px">Pay here on Venmo</a>` +
+             `<p class="venmo-at">@${PAY.venmo}</p>`;
+      steps = `<li>Tap <b>Pay here on Venmo</b>, or open Venmo and find <b>@${PAY.venmo}</b>.</li><li>Check the amount is <b>$${total}</b> and the note says <b>${note}</b>.</li><li>Send as a payment.</li>`;
     }
     document.getElementById('coNum').textContent = num;
     document.getElementById('coPayBox').innerHTML = box;
