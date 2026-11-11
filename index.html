@@ -290,6 +290,12 @@
     border-top:1px solid var(--line); margin-top:12px;
     font-family:var(--serif); font-size:1.2rem; color:var(--bone)}
   .cart-drawer .btn{width:100%; text-align:center}
+  .cart-drawer .btn[aria-disabled="true"]{opacity:.4; cursor:not-allowed; filter:none}
+  .age-check{display:flex; align-items:flex-start; gap:10px; margin:2px 0 14px; cursor:pointer;
+    font-size:.84rem; color:var(--bone); line-height:1.4}
+  .age-check input{width:18px; height:18px; margin-top:1px; flex:none; accent-color:var(--gold); cursor:pointer}
+  .age-err{display:none; color:#E07A86; font-size:.78rem; margin:-6px 0 12px}
+  .age-err.show{display:block}
   .cart-sub{font-size:.76rem; color:var(--mute); text-align:center; margin-top:12px; font-style:italic}
   .cart-close{position:absolute; top:14px; right:16px; background:none; border:none;
     color:var(--mute); font-size:1.5rem; cursor:pointer; line-height:1; padding:4px 8px}
@@ -537,7 +543,9 @@
   <h3 class="foil">Your pack stack</h3>
   <div class="cart-items" id="cartItems"><p class="cart-empty">Nothing in here yet.</p></div>
   <div class="cart-total"><span>Total</span><span id="cartTotal">$0</span></div>
-  <a class="btn" id="checkoutBtn" href="#" onclick="checkout(event)">Order by email</a>
+  <label class="age-check"><input type="checkbox" id="ageOk" onchange="ageChanged()"> I confirm I am 21 or older</label>
+  <p class="age-err" id="ageErr" role="alert">Please confirm you are 21 or older to place an order.</p>
+  <a class="btn" id="checkoutBtn" href="#" onclick="checkout(event)" aria-disabled="true">Order by email</a>
   <p class="cart-sub">We confirm by email with pickup or delivery details. Or skip the cart and find us at the stand.</p>
 </div>
 
@@ -624,13 +632,20 @@
     document.getElementById('cartTotal').textContent = '$' + items.reduce((s,[name,q])=>s+lineTotal(name,q),0);
   }
   function toggleCart(){ document.getElementById('cartDrawer').classList.toggle('open'); }
+  function ageChanged(){
+    const ok = document.getElementById('ageOk').checked;
+    document.getElementById('checkoutBtn').setAttribute('aria-disabled', String(!ok));
+    if(ok) document.getElementById('ageErr').classList.remove('show');
+  }
   function checkout(e){
     e.preventDefault();
     const items = Object.entries(cart);
     if(!items.length) return;
+    const age = document.getElementById('ageOk');
+    if(!age.checked){ document.getElementById('ageErr').classList.add('show'); age.focus(); return; }
     const lines = items.map(([n,q])=>`${q}x ${n} — $${lineTotal(n,q)}`).join('%0D%0A');
     const total = items.reduce((s,[n,q])=>s+lineTotal(n,q),0);
-    window.location.href = `mailto:hello@brooklynteacigs.com?subject=BTC Order&body=Hi BTC — I'd like to order:%0D%0A%0D%0A${lines}%0D%0A%0D%0ATotal: $${total}%0D%0A%0D%0AName:%0D%0APickup at market or Brooklyn delivery?:`;
+    window.location.href = `mailto:hello@brooklynteacigs.com?subject=BTC Order&body=Hi BTC — I'd like to order:%0D%0A%0D%0A${lines}%0D%0A%0D%0ATotal: $${total}%0D%0A%0D%0AI confirm I am 21 or older: Yes%0D%0A%0D%0AName:%0D%0APickup at market or Brooklyn delivery?:`;
   }
 
   // scroll reveal
